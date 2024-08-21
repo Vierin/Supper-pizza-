@@ -15,10 +15,14 @@ export const Categories: React.FC<CategoriesProps> = ({ className }) => {
 		>
 			{cats.map((cat, index) => (
 				<a
-					className={cn('flex, items-center font-bold h-11 rounded-2xl px-5')}
+					className={cn(
+						'flex items-center font-bold h-10 rounded-2xl px-5',
+						activeIndex === index &&
+							'bg-white shadow-gray-200 text-primary shadow-md'
+					)}
 					key={index}
 				>
-					<button></button>
+					<button>{cat}</button>
 				</a>
 			))}
 		</div>
