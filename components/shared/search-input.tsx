@@ -22,10 +22,21 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
     setFocused(false);
   });
 
-  useDebounce(() => {
-    Api.products.search(searcQuery).then(items => setProducts(items));
+  useDebounce( 
+    async () => {
+      try {
+        const items = await Api.products.search(searcQuery);
+        setProducts(items);
+      } catch (error) {
+        console.error(error);
+      }
   }, 250, [searcQuery]);
 
+  const onClickItem = () => {
+    setFocused(false);
+    setSearchQuery('');
+    setProducts([]);
+  }
 
   return (
     <>
@@ -45,15 +56,14 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
               <div className={cn(
                 'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-200 invisible opacity-0 z-30',
                 focused && 'visible opacity-100 top-12'
-              )}>
+                )}>
                 {products.map(product => (
-                   <Link href={`/products/${product.id}`} key={product.id}
-                    className="flex items-center gap-3 w-full px-3 py-2 hover:bg-primary/10">
+                   <Link href={`/product/${product.id}`} key={product.id}
+                    className="flex items-center gap-3 w-full px-3 py-2 hover:bg-primary/10" onClick={onClickItem}>
                     <img className="rounded-sm h-8 w-8" src={product.imageUrl} alt={product.name} />
                     <span>{product.name}</span>
                   </Link>
                 ))}
-               
               </div>
             )
           }
