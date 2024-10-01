@@ -1,32 +1,59 @@
 import { cn } from '@/shared/lib/utils';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Title } from './title';
 import { Button } from '../ui';
 import { PizzaImage } from './pizza-image';
 import { GroupVariants } from './group-variants';
+import { PizzaSize, PizzaType, pizzaTypes } from '@/shared/constants/pizza';
+import { Ingredient, ProductItem } from '@prisma/client';
+import { IngredientItem } from './ingredient-item';
+import { getPizzaDetails } from '@/shared/lib';
+import { usePizzaOptions } from '@/shared/hooks/use-pizza-options';
 
 interface Props {
 	imageUrl: string;
 	name: string;
-	ingredients: any[];
-	// items: any[];
+	ingredients: Ingredient[];
+	items: ProductItem[];
 	loading?: boolean;
-	// onSubmit: (itemId: number, ingredients: number[]) => void;
+	onSubmit: (itemId: number, ingredients: number[]) => void;
 	className?: string;
 }
 
-const ChoosePizzaForm: React.FC<Props> = ({
+export const ChoosePizzaForm: React.FC<Props> = ({
 	name,
 	imageUrl,
 	// price,
-	// onSubmit,
+	onSubmit,
+	items,
+	ingredients,
 	className,
 	loading,
 }) => {
-	const textDetaills =
-		'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget sapien fermentum.';
-	const totalPrice = 100;
-	const size = 30;
+	const {
+		size,
+		type,
+		selectedIngredients,
+		availableSizes,
+		currentItemId,
+		setSize,
+		setType,
+		addIngredient,
+	} = usePizzaOptions(items);
+
+	const { totalPrice, textDetaills } = getPizzaDetails(
+		type,
+		size,
+		items,
+		ingredients,
+		selectedIngredients
+	);
+
+	const handleClickAdd = () => {
+		if (currentItemId) {
+			onSubmit(currentItemId, Array.from(selectedIngredients));
+		}
+	};
 
 	return (
 		<div className={cn(className, 'flex flex-1')}>
@@ -51,7 +78,7 @@ const ChoosePizzaForm: React.FC<Props> = ({
 					/>
 				</div>
 
-				{/* <div className="bg-gray-50 p-5 rounded-md h-[420px] overflow-auto scrollbar mt-5">
+				<div className="bg-gray-50 p-5 rounded-md h-[420px] overflow-auto scrollbar mt-5">
 					<div className="grid grid-cols-3 gap-3">
 						{ingredients.map((ingredient) => (
 							<IngredientItem
@@ -64,14 +91,14 @@ const ChoosePizzaForm: React.FC<Props> = ({
 							/>
 						))}
 					</div>
-				</div> */}
+				</div>
 
 				<Button
 					// loading={loading}
-					// onClick={handleClickAdd}
+					onClick={handleClickAdd}
 					className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
 				>
-					Добавить в корзину за {totalPrice} ₽
+					Add to cart with price {totalPrice} PLN
 				</Button>
 			</div>
 		</div>

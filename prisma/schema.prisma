@@ -17,6 +17,8 @@ model User {
     role     UserRole  @default(USER)
     verified DateTime?
 
+    token String?
+
     provider   String?
     providerId String?
 
