@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { ProductWithRelations } from '@/@types/prisma';
 // import { useCartStore } from '@/shared/store';
-// import toast from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { cn } from '@/shared/lib/utils';
 import { DialogContent, Dialog } from '@/shared/components/ui/dialog';
 import ChooseProductForm from '../choose-product-form';
@@ -20,7 +20,10 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 	const router = useRouter();
 	const firstItem = product.items[0];
 	const isPizzaForm = Boolean(firstItem.pizzaType);
-	const addCartItem = useCartStore((state) => state.addCartItem);
+	const [addCartItem, loading] = useCartStore((state) => [
+		state.addCartItem,
+		state.loading,
+	]);
 
 	const onAddProduct = () => {
 		addCartItem({
@@ -28,11 +31,17 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 		});
 	};
 
-	const onAddPizza = (productItemId: number, ingredient: number[]) => {
-		addCartItem({
-			productItemId,
-			ingredient,
-		});
+	const onAddPizza = async (productItemId: number, ingredients: number[]) => {
+		try {
+			await addCartItem({
+				productItemId,
+				ingredients,
+			});
+			toast.success('Pizza added to cart');
+		} catch (error) {
+			console.error(error);
+			toast.error('Cannot add pizza to cart');
+		}
 	};
 
 	return (
@@ -50,6 +59,7 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 						ingredients={product.ingredients}
 						items={product.items}
 						onSubmit={onAddPizza}
+						loading={loading}
 					/>
 				) : (
 					<ChooseProductForm
@@ -57,6 +67,7 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 						name={product.name}
 						price={firstItem.price}
 						onSubmit={onAddProduct}
+						loading={loading}
 					/>
 				)}
 
