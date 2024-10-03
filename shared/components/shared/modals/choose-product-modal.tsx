@@ -25,22 +25,17 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 		state.loading,
 	]);
 
-	const onAddProduct = () => {
-		addCartItem({
-			productItemId: firstItem.id,
-		});
-	};
-
-	const onAddPizza = async (productItemId: number, ingredients: number[]) => {
+	const onSubmit = async (productItemId?: number, ingredients?: number[]) => {
 		try {
-			await addCartItem({
-				productItemId,
-				ingredients,
-			});
-			toast.success('Pizza added to cart');
+			const itemId = productItemId ?? firstItem.id;
+
+			await addCartItem({ productItemId: itemId, ingredients });
+
+			toast.success(`${product.name} added to cart`);
+			router.back();
 		} catch (error) {
 			console.error(error);
-			toast.error('Cannot add pizza to cart');
+			toast.error('Cannot add product to cart');
 		}
 	};
 
@@ -58,7 +53,7 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 						name={product.name}
 						ingredients={product.ingredients}
 						items={product.items}
-						onSubmit={onAddPizza}
+						onSubmit={onSubmit}
 						loading={loading}
 					/>
 				) : (
@@ -66,7 +61,7 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
 						imageUrl={product.imageUrl}
 						name={product.name}
 						price={firstItem.price}
-						onSubmit={onAddProduct}
+						onSubmit={onSubmit}
 						loading={loading}
 					/>
 				)}
