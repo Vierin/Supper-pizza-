@@ -4,13 +4,14 @@ import Image from 'next/image';
 import React from 'react';
 import { Title } from './title';
 import { Button } from '../ui';
+import { Ingredient } from '@prisma/client';
 
 interface Props {
 	id: number;
 	name: string;
 	price: number;
 	imageUrl: string;
-	// ingredients: Ingredient[];
+	ingredients: Ingredient[];
 	className?: string;
 }
 
@@ -19,7 +20,7 @@ export const ProductCard: React.FC<Props> = ({
 	name,
 	price,
 	imageUrl,
-	// ingredients,
+	ingredients,
 	className,
 }) => {
 	return (
@@ -32,8 +33,7 @@ export const ProductCard: React.FC<Props> = ({
 				<Title className="mt-3 mb-1 font-bold" size="sm" text={name} />
 
 				<p className="text-sm text-gray-400">
-					{/* {ingredients.map((ingredient) => ingredient.name).join(', ')} */}
-					Ham, Pineapple, Cheese
+					{ingredients.map((ingredient) => ingredient.name).join(', ')}
 				</p>
 
 				<div className="flex justify-between items-center mt-4">

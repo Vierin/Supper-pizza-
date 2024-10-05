@@ -64,7 +64,7 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({
 						/>
 						<Title
 							size="sm"
-							text="Корзина пустая"
+							text="Cart is empty"
 							className="text-center font-bold my-2"
 						/>
 						<p className="text-center text-neutral-500 mb-5">
@@ -119,8 +119,8 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({
 
 								<Link href="/checkout">
 									<Button
-										// onClick={() => setRedirecting(true)}
-										// loading={redirecting}
+										onClick={() => setRedirecting(true)}
+										loading={redirecting}
 										type="submit"
 										className="w-full h-12 text-base"
 									>

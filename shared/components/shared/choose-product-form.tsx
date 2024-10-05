@@ -12,7 +12,7 @@ interface Props {
 	className?: string;
 }
 
-const ChooseProductForm: React.FC<Props> = ({
+export const ChooseProductForm: React.FC<Props> = ({
 	name,
 	imageUrl,
 	price,
@@ -38,11 +38,9 @@ const ChooseProductForm: React.FC<Props> = ({
 					onClick={() => onSubmit?.()}
 					className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
 				>
-					Добавить в корзину за {price} PLN
+					Add to cart with {price} PLN
 				</Button>
 			</div>
 		</div>
 	);
 };
-
-export default ChooseProductForm;

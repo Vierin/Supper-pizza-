@@ -40,7 +40,7 @@ export async function PATCH(
 	} catch (error) {
 		console.log('[CART_PATCH] Server error', error);
 		return NextResponse.json(
-			{ message: 'Не удалось обновить корзину' },
+			{ message: 'Cart can`t be update' },
 			{ status: 500 }
 		);
 	}

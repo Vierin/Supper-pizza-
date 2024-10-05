@@ -3,12 +3,11 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { ProductWithRelations } from '@/@types/prisma';
-// import { useCartStore } from '@/shared/store';
 import toast from 'react-hot-toast';
 import { cn } from '@/shared/lib/utils';
 import { DialogContent, Dialog } from '@/shared/components/ui/dialog';
-import ChooseProductForm from '../choose-product-form';
-import ChoosePizzaForm from '../choose-pizza-form';
+import { ChooseProductForm } from '../choose-product-form';
+import { ChoosePizzaForm } from '../choose-pizza-form';
 import { useCartStore } from '@/shared/store';
 
 interface Props {

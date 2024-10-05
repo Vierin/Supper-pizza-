@@ -104,5 +104,3 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 		</div>
 	);
 };
-
-export default ChoosePizzaForm;
