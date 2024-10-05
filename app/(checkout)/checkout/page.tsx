@@ -1,20 +1,33 @@
 'use client';
+import { FormProvider, useForm } from 'react-hook-form';
 
+import { useCart } from '@/shared/hooks';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
+	CheckoutAddressForm,
+	CheckoutCart,
+	CheckoutPersonalForm,
 	CheckoutSidebar,
 	Container,
 	Title,
-	WhiteBlock,
 } from '@/shared/components/shared';
-import { CheckoutItem } from '@/shared/components/shared';
-import { Input, Textarea } from '@/shared/components/ui';
-import { PizzaSize, PizzaType } from '@/shared/constants/pizza';
-import { useCart } from '@/shared/hooks';
-import { getCartItemDetails } from '@/shared/lib';
+import { checkoutFormSchema, CheckoutFormValues } from '@/shared/constants';
 
 export default function CheckoutPage() {
 	const { totalAmount, updateItemQuantity, items, removeCartItem, loading } =
 		useCart();
+
+	const form = useForm<CheckoutFormValues>({
+		resolver: zodResolver(checkoutFormSchema),
+		defaultValues: {
+			firstName: '',
+			lastName: '',
+			email: '',
+			phone: '',
+			address: '',
+			comment: '',
+		},
+	});
 
 	const onClickCountButton = (
 		id: number,
@@ -25,71 +38,40 @@ export default function CheckoutPage() {
 		updateItemQuantity(id, newQuantity);
 	};
 
+	const onSubmit = (data: CheckoutFormValues) => {
+		console.log(data);
+	};
+
 	return (
 		<Container className="flex flex-col my-10">
 			<Title text="Checkout" className="font-extrabold mb-8 text-[36px]" />
 
-			<div className="flex gap-10">
-				<div className="flex gap-10 flex-col flex-1 mb-20">
-					<WhiteBlock title="1. Cart">
-						{items.map((item) => (
-							<CheckoutItem
-								key={item.id}
-								id={item.id}
-								imageUrl={item.imageUrl}
-								details={getCartItemDetails(
-									item.ingredients,
-									item.pizzaType as PizzaType,
-									item.pizzaSize as PizzaSize
-								)}
-								name={item.name}
-								price={item.price}
-								quantity={item.quantity}
-								disabled={item.disabled}
-								onClickCountButton={(type) =>
-									onClickCountButton(item.id, item.quantity, type)
-								}
+			<FormProvider {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					<div className="flex gap-10">
+						<div className="flex gap-10 flex-col flex-1 mb-20">
+							<CheckoutCart
+								onClickCountButton={onClickCountButton}
+								removeCartItem={removeCartItem}
+								items={items}
+								loading={loading}
 							/>
-						))}
-					</WhiteBlock>
 
-					<WhiteBlock title="2. Personal data">
-						<div className="grid grid-cols-2 gap-5">
-							<Input
-								name="firstName"
-								className="text-base"
-								placeholder="First name"
+							<CheckoutPersonalForm
+								className={loading ? 'opacity-40 pointer-events-none' : ''}
 							/>
-							<Input
-								name="lastName"
-								className="text-base"
-								placeholder="Last name"
-							/>
-							<Input name="email" className="text-base" placeholder="E-mail" />
-							<Input name="phone" className="text-base" placeholder="Phone" />
-						</div>
-					</WhiteBlock>
 
-					<WhiteBlock title="3. Delivery address">
-						<div className="flex flex-col gap-5">
-							<Input
-								name="address"
-								className="text-base"
-								placeholder="Address"
-							/>
-							<Textarea
-								rows={5}
-								className="text-base"
-								placeholder="Comment to order"
+							<CheckoutAddressForm
+								className={loading ? 'opacity-40 pointer-events-none' : ''}
 							/>
 						</div>
-					</WhiteBlock>
-				</div>
 
-				<div className="w-[450px]">
-					<CheckoutSidebar totalAmount={totalAmount} loading={loading} />
-				</div>
-			</div>
+						<div className="w-[450px]">
+							<CheckoutSidebar totalAmount={totalAmount} loading={loading} />
+						</div>
+					</div>
+				</form>
+			</FormProvider>
 		</Container>
 	);
 }
