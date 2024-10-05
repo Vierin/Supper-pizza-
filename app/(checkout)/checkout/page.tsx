@@ -12,8 +12,13 @@ import {
 	Title,
 } from '@/shared/components/shared';
 import { checkoutFormSchema, CheckoutFormValues } from '@/shared/constants';
+import { createOrder } from '@/app/actions';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
+import { set } from 'zod';
 
 export default function CheckoutPage() {
+	const [submitting, setSubmitting] = useState(false);
 	const { totalAmount, updateItemQuantity, items, removeCartItem, loading } =
 		useCart();
 
@@ -38,8 +43,25 @@ export default function CheckoutPage() {
 		updateItemQuantity(id, newQuantity);
 	};
 
-	const onSubmit = (data: CheckoutFormValues) => {
-		console.log(data);
+	const onSubmit = async (data: CheckoutFormValues) => {
+		try {
+			setSubmitting(true);
+			const url = await createOrder(data);
+
+			toast.success('Order created! Redirect to payment page.', {
+				icon: '✅',
+			});
+
+			if (url) {
+				location.href = url;
+			}
+		} catch (error) {
+			console.error(error);
+			setSubmitting(false);
+			toast.error('Failed to create order', {
+				icon: '❌',
+			});
+		}
 	};
 
 	return (
@@ -67,7 +89,10 @@ export default function CheckoutPage() {
 						</div>
 
 						<div className="w-[450px]">
-							<CheckoutSidebar totalAmount={totalAmount} loading={loading} />
+							<CheckoutSidebar
+								totalAmount={totalAmount}
+								loading={loading || submitting}
+							/>
 						</div>
 					</div>
 				</form>
